@@ -33,13 +33,17 @@ router.post('/login', [
     }
 
     const { email, password } = req.body;
-    console.log('Looking up user for email:', email);
+    console.log('Request body:', req.body);
+    console.log('Looking up user for email:', email.toLowerCase());
     
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     console.log('User found:', !!user);
-
     if (user) {
+      console.log('User email in DB:', user.email);
       console.log('Comparing passwords...');
+      console.log('Entered password:', password);
+      console.log('Stored hash:', user.password);
+      
       const passwordMatch = await user.matchPassword(password);
       console.log('Password match:', passwordMatch);
       
