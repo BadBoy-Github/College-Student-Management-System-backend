@@ -7,9 +7,14 @@ const { protect, admin } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
-  });
+  try {
+    return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback-dev-secret', {
+      expiresIn: process.env.JWT_EXPIRE || '30d'
+    });
+  } catch (error) {
+    console.error('JWT generation error:', error);
+    throw error;
+  }
 };
 
 router.post('/login', [

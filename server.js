@@ -8,10 +8,17 @@ connectDB();
 const app = express();
 
 const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'https://college-student-management-system-f.vercel.app'
-  ],
+  origin: function (origin, callback) {
+    // Allow localhost and all Vercel preview deployments
+    if (!origin || 
+        origin.includes('localhost') || 
+        origin.includes('vercel.app') ||
+        origin.includes('college-student-management-system')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
