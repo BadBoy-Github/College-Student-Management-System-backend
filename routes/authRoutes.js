@@ -21,29 +21,52 @@ router.post('/login', [
   check('email', 'Please include a valid email').isEmail(),
   check('password', 'Password is required').exists()
 ], async (req, res) => {
+  console.log('Login request received');
+  console.log('ENV check - JWT_SECRET exists:', !!process.env.JWT_SECRET);
+  console.log('ENV check - MONGO_URI exists:', !!process.env.MONGO_URI);
+  
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { email, password } = req.body;
+    console.log('Looking up user for email:', email);
+    
     const user = await User.findOne({ email });
+    console.log('User found:', !!user);
 
-    if (user && (await user.matchPassword(password))) {
-      res.json({
-        _id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        token: generateToken(user._id)
-      });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+    if (user) {
+      console.log('Comparing passwords...');
+      const passwordMatch = await user.matchPassword(password);
+      console.log('Password match:', passwordMatch);
+      
+      if (passwordMatch) {
+        console.log('Generating token...');
+        const token = generateToken(user._id);
+        console.log('Token generated successfully');
+        
+        return res.json({
+          _id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          role: user.role,
+          token: token
+        });
+      }
     }
+    
+    console.log('Invalid credentials');
+    res.status(401).json({ message: 'Invalid email or password' });
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error during login', error: process.env.NODE_ENV === 'development' ? error.message : undefined });
+    console.error('Login error full details:', error);
+    res.status(500).json({ 
+      message: 'Server error during login', 
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 

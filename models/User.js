@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+// Force bcryptjs to use pure JS implementation (fixes Vercel serverless issues)
+process.env.BCRYPTJS_NO_NATIVE = '1';
 const bcrypt = require('bcryptjs');
 
 const userSchema = mongoose.Schema({

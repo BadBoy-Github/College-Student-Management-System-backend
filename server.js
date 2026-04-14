@@ -8,16 +8,19 @@ const app = express();
 
 // Manual CORS headers for Vercel compatibility
 app.use((req, res, next) => {
-  console.log('Request origin:', req.headers.origin);
-  console.log('Request method:', req.method);
+  const origin = req.headers.origin;
   
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  // Allow all origins dynamically for Vercel previews
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.header('Vary', 'Origin'); // Critical for caching
   
   if (req.method === 'OPTIONS') {
-    console.log('Handling OPTIONS preflight');
     return res.sendStatus(200);
   }
   next();
