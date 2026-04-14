@@ -10,7 +10,7 @@ const app = express();
 const corsOptions = {
   origin: [
     'http://localhost:5173',
-    'https://*.vercel.app'
+    'https://college-student-management-system-f.vercel.app'
   ],
   credentials: true,
   optionsSuccessStatus: 200
