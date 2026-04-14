@@ -1,29 +1,28 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const connectDB = require('./config/db');
 
 connectDB();
 
 const app = express();
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow localhost and all Vercel preview deployments
-    if (!origin || 
-        origin.includes('localhost') || 
-        origin.includes('vercel.app') ||
-        origin.includes('college-student-management-system')) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200
-};
+// Manual CORS headers for Vercel compatibility
+app.use((req, res, next) => {
+  console.log('Request origin:', req.headers.origin);
+  console.log('Request method:', req.method);
+  
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  
+  if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS preflight');
+    return res.sendStatus(200);
+  }
+  next();
+});
 
-app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/auth', require('./routes/authRoutes'));
