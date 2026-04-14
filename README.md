@@ -2,6 +2,30 @@
 
 Express.js backend REST API for the College Student Management System with MongoDB, JWT authentication, and role-based access control.
 
+## 🚀 Deployment on Vercel
+
+### Prerequisites
+- MongoDB Atlas account (for production database)
+- Vercel account
+
+### Environment Variables
+Set these variables in Vercel Environment Settings:
+
+| Variable | Description |
+|----------|-------------|
+| `MONGO_URI` | MongoDB connection string (use MongoDB Atlas for production) |
+| `JWT_SECRET` | Secure secret key for JWT token generation |
+| `JWT_EXPIRE` | JWT token expiration (default: 30d) |
+| `NODE_ENV` | Set to `production` |
+
+### Deployment Steps
+1. Push code to your GitHub repository
+2. Import repository in Vercel
+3. Set environment variables in Vercel dashboard
+4. Deploy!
+
+**Note:** This backend is already configured for Vercel deployment with `vercel.json` file.
+
 ## Tech Stack
 - Node.js + Express.js
 - MongoDB + Mongoose ODM
